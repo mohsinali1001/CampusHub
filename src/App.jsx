@@ -203,11 +203,11 @@ function App() {
         {/* Top Header */}
         <Header />
 
-        {activePage === 'dashboard' && (
-          <Dashboard
-            students={students}
-          />
-        )}
+            {activePage === 'dashboard' && (
+            <Dashboard
+              students={students}
+            />
+          )}
 
         {/* Dashboard Main Workspace */}
         <main className="dashboard-content">
@@ -234,7 +234,7 @@ function App() {
               </div>
             </>
           )}
-
+      
 
           {activePage === 'students' && (
             <Students

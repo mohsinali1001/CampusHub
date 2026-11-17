@@ -1,3 +1,13 @@
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LabelList,
+} from "recharts";
 
 function DepartmentGpaChart({ students = [] }) {
   const departmentStats = {};
@@ -8,10 +18,7 @@ function DepartmentGpaChart({ students = [] }) {
     if (!student.department || !Number.isFinite(gpa)) return;
 
     if (!departmentStats[student.department]) {
-      departmentStats[student.department] = {
-        totalGpa: 0,
-        count: 0,
-      };
+      departmentStats[student.department] = { totalGpa: 0, count: 0 };
     }
 
     departmentStats[student.department].totalGpa += gpa;
@@ -21,11 +28,10 @@ function DepartmentGpaChart({ students = [] }) {
   const departmentData = Object.entries(departmentStats).map(
     ([department, stats]) => ({
       department,
-      averageGpa: stats.totalGpa / stats.count,
+      averageGpa: Number((stats.totalGpa / stats.count).toFixed(2)),
+      students: stats.count,
     })
   );
-
-  const maxGpa = 4;
 
   return (
     <div className="department-gpa-card">
@@ -39,39 +45,48 @@ function DepartmentGpaChart({ students = [] }) {
       </div>
 
       {departmentData.length > 0 ? (
-        <div className="department-gpa-list">
-          {departmentData.map((item) => (
-            <div className="department-gpa-item" key={item.department}>
-              <div className="department-gpa-label">
-                <span>{item.department}</span>
-                <strong>{item.averageGpa.toFixed(2)}</strong>
-              </div>
-
-              <div
-                className="department-gpa-track"
-                role="progressbar"
-                aria-label={`${item.department} average CGPA`}
-                aria-valuemin="0"
-                aria-valuemax="4"
-                aria-valuenow={Number(item.averageGpa.toFixed(2))}
+        <div className="gpa-chart-wrapper">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={departmentData}
+              margin={{ top: 24, right: 16, left: 0, bottom: 8 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+              <XAxis
+                dataKey="department"
+                tick={{ fontSize: 12, fill: "#475569" }}
+                tickLine={false}
+                axisLine={{ stroke: "#94a3b8" }}
+              />
+              <YAxis
+                domain={[0, 4]}
+                ticks={[0, 1, 2, 3, 4]}
+                tick={{ fontSize: 12, fill: "#64748b" }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip
+                cursor={{ fill: "rgba(37, 99, 235, 0.06)" }}
+                formatter={(value) => [value.toFixed(2), "Average CGPA"]}
+              />
+              <Bar
+                dataKey="averageGpa"
+                fill="#2563eb"
+                radius={[6, 6, 0, 0]}
+                maxBarSize={64}
               >
-                <div
-                  className="department-gpa-fill"
-                  style={{
-                    width: `${Math.min(
-                      (item.averageGpa / maxGpa) * 100,
-                      100
-                    )}%`,
-                  }}
+                <LabelList
+                  dataKey="averageGpa"
+                  position="top"
+                  formatter={(value) => value.toFixed(2)}
+                  style={{ fontSize: 13, fontWeight: 700, fill: "#0f172a" }}
                 />
-              </div>
-            </div>
-          ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       ) : (
-        <p className="empty-table-message">
-          No GPA records are available yet.
-        </p>
+        <p className="gpa-empty-message">No GPA records are available yet.</p>
       )}
     </div>
   );
