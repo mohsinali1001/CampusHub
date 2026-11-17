@@ -218,16 +218,22 @@ function App() {
 
               <div className="content-grid">
                 <StudentTable
-                  students={students}
+                  students={filteredStudents}
                   departmentOptions={departmentOptions}
                   isAddFormVisible={isAddFormVisible}
-                  onToggleAddForm={() =>
-                    setIsAddFormVisible((visible) => !visible)
-                  }
+                  onToggleAddForm={() => {
+                    setIsAddFormVisible((visible) => !visible);
+                    setStudentFormError('');
+                  }}
                   newStudent={newStudent}
                   onNewStudentChange={handleNewStudentChange}
                   onAddStudent={handleAddStudent}
                   onDeleteStudent={handleDeleteStudent}
+                  searchText={searchText}
+                  onSearchChange={setSearchText}
+                  selectedDepartment={selectedDepartment}
+                  onDepartmentChange={setSelectedDepartment}
+                  studentFormError={studentFormError}
                 />
 
                 <RecentActivity />
